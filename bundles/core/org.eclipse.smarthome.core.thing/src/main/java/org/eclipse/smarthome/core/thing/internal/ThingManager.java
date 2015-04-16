@@ -501,15 +501,17 @@ public class ThingManager extends AbstractEventSubscriber implements ThingTracke
     private void setThingStatus(Thing thing, ThingStatusInfo thingStatus) {
         thing.setStatusInfo(thingStatus);
         
-        String thingUID = thing.getUID().getAsString();
-        String topic = "smarthome/things/status";
-        Dictionary<String, Object> properties = new Hashtable<String, Object>(4);
-        properties.put("uid", thingUID);
-        properties.put("status", thingStatus.getStatus());
-        properties.put("statusDetail", thingStatus.getStatusDetail());
-        properties.put("statusDescription", (thingStatus.getDescription() != null) ? thingStatus.getDescription() : "");
-        
-        eventAdmin.postEvent(new Event(topic, properties));
+        if(eventAdmin != null) {
+            String thingUID = thing.getUID().getAsString();
+            String topic = "smarthome/things/status";
+            Dictionary<String, Object> properties = new Hashtable<String, Object>(4);
+            properties.put("uid", thingUID);
+            properties.put("status", thingStatus.getStatus());
+            properties.put("statusDetail", thingStatus.getStatusDetail());
+            properties.put("statusDescription", (thingStatus.getDescription() != null) ? thingStatus.getDescription() : "");
+            
+            eventAdmin.postEvent(new Event(topic, properties));
+        }
     }
 
 }
