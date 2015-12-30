@@ -3,7 +3,7 @@
 	<head>
 		<title>%label%</title>
        	<META HTTP-EQUIV="Content-type" CONTENT="text/html; charset=utf-8">
-   		<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+   		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 		
@@ -14,27 +14,57 @@
 		<link rel="apple-touch-startup-image" href="images/splash-ipad-v.png" media="screen and (min-device-width: 481px) and (max-device-width: 1024px) and (orientation:portrait)" />
 		<link rel="apple-touch-startup-image" href="images/splash-iphone.png" media="screen and (max-device-width: 320px)" />		
 
-		<link rel="Stylesheet" type="text/css" href="WebApp/Design/Render.css" />
-		<link rel="Stylesheet" type="text/css" href="WebApp/Design/RenderRTL.css" />
+		<link rel="stylesheet" type="text/css" href="WebApp/Design/Render.css" />
+		<link rel="stylesheet" type="text/css" href="WebApp/Design/RenderRTL.css" />
 		<link rel="stylesheet" type="text/css" href="jquery.miniColors.css" />
+		<link rel="stylesheet" type="text/css" href="slider.css" />
 
 		<script type="text/javascript" src="WebApp/Action/Logic.js"></script>
 		<script src="jquery.min.js"></script>
 		<script src="jquery.miniColors.js"></script>
+		<script src="polyfills.js"></script>
+		<script src="slider.js"></script>
 
 		<script>
-			WA.AddEventListener("endasync", function(evt) {				
-				hash = document.location.hash.substring(2);
+
+			// Create ESH Namespace
+			var ESH = document.ESH;
+			if (!ESH) {
+				ESH = document.ESH = {
+					pollingRequest: null,
+					pollURL: null
+				};
+			}
+
+			WA.AddEventListener("endasync", function(evt) {
+				var hash = document.location.hash.substring(2);
 				if(evt.context[0].indexOf(hash)>=0 || hash=="Home") {
 					if (evt.target.responseXML) {
 						if(evt.context[0].indexOf("poll=true")>=0) {
-							WA.Request(evt.context[0], null, -1, true, null);
+							ESH.pollURL = evt.context[0];
+							WA.Request(ESH.pollURL, null, -1, true, null);
 						}
 					}
 				}
 			});
+
+			WA.AddEventListener('willasync', function (attrs) {
+				var url = attrs.context[0];
+				if (url.indexOf('poll=true') >= 0) {
+					ESH.pollingRequest = attrs.target;
+				}
+			});
+
+			WA.AddEventListener("beginslide", function(evt) {
+				if (ESH.pollingRequest) {
+					ESH.pollingRequest.onreadystatechange = null;
+					ESH.pollingRequest.abort();
+					ESH.pollingRequest = null;
+				}
+			});
 			
 			WA.AddEventListener("endslide", function(evt) {
+				var hash, path, search;
 				hash = document.location.hash;
 				path = document.location.pathname;
 				if(document.location.search) {
@@ -43,14 +73,22 @@
 					search = "?";
 				}
 				search = search + "sitemap=%sitemap%&w=" + hash.substring(2) + "&poll=true";
-				url = path + search; 
-				WA.Request(url, null, -1, true, null);
+				ESH.pollURL = path + search;
+				if (!ESH.pollingRequest) {
+					WA.Request(ESH.pollURL , null, -1, true, null);
+				}
 				imageRefresh = imagesToRefreshOnPage;
 				imagesToRefreshOnPage = 0;
 			});
 
+			/**
+			 * Initial start of long polling, 1.5s after page loading has finished
+			 */
 			WA.AddEventListener("load", function() {
-				setTimeout("WA.Request('%servletname%?sitemap=%sitemap%&poll=true', null, -1, true, null)", 1500);
+				ESH.pollURL = '%servletname%?sitemap=%sitemap%&poll=true';
+				setTimeout(function () {
+					WA.Request(ESH.pollURL , null, -1, true, null);
+				}, 1500);
 			});
 			
 	        function ChangeState(request) {
