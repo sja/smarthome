@@ -53,6 +53,7 @@ var paths = {
     JSLibs: [
         './node_modules/jquery/dist/jquery.min.js',
         './node_modules/angular/angular.min.js',
+        './node_modules/stacktrace-js/dist/stacktrace.min.js',
         './node_modules/masonry-layout/dist/masonry.pkgd.min.js',
         './node_modules/sprintf-js/dist/sprintf.min.js',
         './node_modules/bootstrap/dist/js/bootstrap.min.js',
@@ -200,6 +201,7 @@ gulp.task('inject', ['build'], function () {
                      './web-src/js/services.js',
                      './web-src/js/services.repositories.js',
                      './web-src/js/services.rest.js',
+                     './web-src/js/services.logging.js',
                      './web-src/js/shared.properties.js'
                      ]
     }    

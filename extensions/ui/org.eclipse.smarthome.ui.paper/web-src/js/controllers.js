@@ -1,4 +1,4 @@
-angular.module('PaperUI.controllers', [ 'PaperUI.constants' ]).controller('BodyController', function($rootScope, $scope, $http, eventService, toastService, discoveryResultRepository, thingTypeRepository, bindingRepository, restConfig) {
+angular.module('PaperUI.controllers', [ 'PaperUI.constants' ]).controller('BodyController', function($rootScope, $scope, $http, $log, eventService, toastService, discoveryResultRepository, thingTypeRepository, bindingRepository, restConfig) {
     $scope.scrollTop = 0;
     $(window).scroll(function() {
         $scope.$apply(function(scope) {
@@ -44,10 +44,10 @@ angular.module('PaperUI.controllers', [ 'PaperUI.constants' ]).controller('BodyC
         var itemName = topic.split('/')[2];
         var state = stateObject.value;
 
-        console.log('Item ' + itemName + ' updated: ' + state);
+        $log.info('Item ' + itemName + ' updated: ' + state);
 
         if ($rootScope.itemUpdates[itemName] + 500 > new Date().getTime()) {
-            console.log('Ignoring update for ' + itemName + ', because update was probably triggered through UI.');
+            $log.info('Ignoring update for ' + itemName + ', because update was probably triggered through UI.');
             return;
         }
 
@@ -66,7 +66,7 @@ angular.module('PaperUI.controllers', [ 'PaperUI.constants' ]).controller('BodyC
                         item.state = state;
                     });
                 } else {
-                    console.log('Ignoring state ' + state + ' for ' + itemName)
+                    $log.info('Ignoring state ' + state + ' for ' + itemName)
                 }
             }
             if (item.members) {
