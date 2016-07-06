@@ -1,0 +1,48 @@
+{
+  "name": "org.eclipse.smarthome.ui.my",
+  "version": "0.0.0",
+  "private": true,
+  "esh": {
+    "publicPath": "/my"
+  },
+  "author": {
+    "name": "Sebastian Janzen",
+    "email": "sebastian.janzen@innoq.com"
+  },
+  "dependencies": {
+    "angular": "^1.5.7",
+    "angular-animate": "^1.5.7",
+    "angular-aria": "^1.5.7",
+    "angular-messages": "^1.5.7",
+    "angular-resource": "^1.5.7",
+    "angular-route": "^1.5.7",
+    "angular-touch": "^1.5.7",
+    "angular-translate": "^2.11.0",
+    "bootstrap": "3.3.2",
+    "html-loader": "^0.4.3",
+    "jquery": "^2.1.3",
+    "jquery-ui": "^1.10.5",
+    "raw-loader": "^0.5.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.10.4",
+    "babel-eslint": "^6.1.0",
+    "babel-loader": "^6.2.4",
+    "babel-polyfill": "^6.9.1",
+    "babel-preset-es2015": "^6.9.0",
+    "eslint": "^2.5.3",
+    "eslint-loader": "^1.3.0",
+    "eslint-plugin-angular": "^1.0.0",
+    "express": "^4.14.0",
+    "ng-annotate-webpack-plugin": "^0.1.3",
+    "progress-bar-webpack-plugin": "^1.8.0",
+    "proxy-middleware": "^0.15.0",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "scripts": {
+    "test": "npm run -q lint",
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  }
+}
